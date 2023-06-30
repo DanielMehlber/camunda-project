@@ -26,7 +26,7 @@ public class MemberChecker implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        final String memberName = (String) delegateExecution.getVariable("member-name");
+        final String memberName = (String) delegateExecution.getVariable("memberName");
         final String associationName = (String) delegateExecution.getVariable("associationName");
 
         MockDataBaseSingleton database = MockDataBaseSingleton.getInstance();

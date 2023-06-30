@@ -8,12 +8,12 @@
     <bpmn:messageFlow id="Flow_0xy839s" sourceRef="Participant_0god7fc" targetRef="Event_0ueo6zs" />
     <bpmn:messageFlow id="Flow_1p12s9h" sourceRef="Activity_02upfm2" targetRef="Participant_0god7fc" />
     <bpmn:messageFlow id="Flow_1a7peaf" sourceRef="Activity_0qteph5" targetRef="Participant_0ribdgp" />
-    <bpmn:messageFlow id="Flow_15l9wso" sourceRef="Participant_0god7fc" targetRef="Event_0p55k7r" />
     <bpmn:messageFlow id="Flow_1inyhzc" sourceRef="Activity_006a3f4" targetRef="Participant_0ribdgp" />
     <bpmn:messageFlow id="Flow_1tzc3di" sourceRef="Activity_0o8xndt" targetRef="Participant_0god7fc" />
     <bpmn:messageFlow id="Flow_0fhd0fn" sourceRef="Participant_0god7fc" targetRef="StartEvent_02okr4d" />
+    <bpmn:messageFlow id="Flow_15l9wso" sourceRef="Participant_0god7fc" targetRef="Event_0p55k7r" />
   </bpmn:collaboration>
-  <bpmn:process id="Mitgliedschaft_beenden" isExecutable="false">
+  <bpmn:process id="Mitgliedschaft_beenden" name="Mitgliedschaft Beenden" isExecutable="true">
     <bpmn:startEvent id="StartEvent_02okr4d" name="Anfrage auf Austritt erhalten">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -23,7 +23,7 @@
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1898nfy</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_17d59o9" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_17d59o9" messageRef="Message_0grjugv" />
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1366xg9" sourceRef="Gateway_1uz0ax4" targetRef="Event_0ovz3mr" />
     <bpmn:sequenceFlow id="Flow_0qkp7e4" sourceRef="Gateway_1uz0ax4" targetRef="Event_0ueo6zs" />
@@ -32,8 +32,6 @@
     <bpmn:sequenceFlow id="Flow_047kp4r" sourceRef="Activity_0raletf" targetRef="Activity_02upfm2" />
     <bpmn:sequenceFlow id="Flow_0tjczq0" sourceRef="Activity_02upfm2" targetRef="Gateway_12iz6j6" />
     <bpmn:sequenceFlow id="Flow_0759nz2" sourceRef="Gateway_12iz6j6" targetRef="Event_1gh5sta" />
-    <bpmn:sequenceFlow id="Flow_050q7lr" sourceRef="Gateway_12iz6j6" targetRef="Event_0p55k7r" />
-    <bpmn:sequenceFlow id="Flow_075hmi2" sourceRef="Event_0p55k7r" targetRef="Event_16etvuj" />
     <bpmn:sequenceFlow id="Flow_1jop5tb" sourceRef="Event_1gh5sta" targetRef="Event_03y5g24" />
     <bpmn:subProcess id="Activity_0nds5nd" name="Austrittsanfrage bearbeiten">
       <bpmn:extensionElements>
@@ -51,11 +49,11 @@
         <bpmn:outgoing>Flow_0wzba56</bpmn:outgoing>
         <bpmn:outgoing>Flow_1tzm3pw</bpmn:outgoing>
       </bpmn:parallelGateway>
-      <bpmn:sendTask id="Activity_0qteph5" name="Benachrichtigung versenden">
+      <bpmn:sendTask id="Activity_0qteph5" name="Benachrichtigung versenden" camunda:class="de.thi.associations.bpmn.delegates.messages.AssociationManagerCancellationNotifier">
         <bpmn:incoming>Flow_1tzm3pw</bpmn:incoming>
         <bpmn:outgoing>Flow_0ojtep3</bpmn:outgoing>
       </bpmn:sendTask>
-      <bpmn:sendTask id="Activity_13jb5fr" name="Bestätigung versenden">
+      <bpmn:sendTask id="Activity_13jb5fr" name="Bestätigung versenden" camunda:class="de.thi.associations.bpmn.delegates.messages.MemberCancellationConfirmationSender">
         <bpmn:incoming>Flow_0wzba56</bpmn:incoming>
         <bpmn:outgoing>Flow_1hgy71m</bpmn:outgoing>
       </bpmn:sendTask>
@@ -167,18 +165,18 @@
       <bpmn:incoming>Flow_1366xg9</bpmn:incoming>
       <bpmn:outgoing>Flow_0z55vur</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0m346l0">
-        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression" />
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="Event_0ueo6zs" name="Aufhebung des Austritts erhalten">
       <bpmn:incoming>Flow_0qkp7e4</bpmn:incoming>
       <bpmn:outgoing>Flow_0pw9yzc</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1k5fcvp" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1k5fcvp" messageRef="Message_3uebkrb" />
     </bpmn:intermediateCatchEvent>
     <bpmn:endEvent id="Event_11qgqcy" name="Austritt von Mitglied abgebrochen">
       <bpmn:incoming>Flow_0pw9yzc</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sendTask id="Activity_02upfm2" name="Austritts- bestätigung senden">
+    <bpmn:sendTask id="Activity_02upfm2" name="Austritts- bestätigung senden" camunda:class="de.thi.associations.bpmn.delegates.messages.FinalCancellationConfirmationSender">
       <bpmn:incoming>Flow_047kp4r</bpmn:incoming>
       <bpmn:outgoing>Flow_0tjczq0</bpmn:outgoing>
     </bpmn:sendTask>
@@ -187,20 +185,17 @@
       <bpmn:outgoing>Flow_0759nz2</bpmn:outgoing>
       <bpmn:outgoing>Flow_050q7lr</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="Event_0p55k7r" name="Revidierung erhalten">
-      <bpmn:incoming>Flow_050q7lr</bpmn:incoming>
-      <bpmn:outgoing>Flow_075hmi2</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_01qs8eo" />
-    </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="Event_1gh5sta" name="Revidierungsfrist überschritten">
       <bpmn:incoming>Flow_0759nz2</bpmn:incoming>
       <bpmn:outgoing>Flow_1jop5tb</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0b6ticf" />
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0b6ticf">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateThrowEvent id="Event_16etvuj" name="Mitgliedschaft beenden">
       <bpmn:incoming>Flow_075hmi2</bpmn:incoming>
       <bpmn:outgoing>Flow_0ojmaqi</bpmn:outgoing>
-      <bpmn:compensateEventDefinition id="CompensateEventDefinition_0roecud" />
+      <bpmn:compensateEventDefinition id="CompensateEventDefinition_0roecud" activityRef="Activity_0raletf" />
     </bpmn:intermediateThrowEvent>
     <bpmn:endEvent id="Event_03y5g24" name="Mitglied ausgetreten">
       <bpmn:incoming>Flow_1jop5tb</bpmn:incoming>
@@ -251,7 +246,7 @@
         <bpmn:outgoing>Flow_13dheix</bpmn:outgoing>
         <bpmn:outgoing>Flow_01tpq6h</bpmn:outgoing>
       </bpmn:parallelGateway>
-      <bpmn:sendTask id="Activity_006a3f4" name="Benachrichtigung über Revidierung senden">
+      <bpmn:sendTask id="Activity_006a3f4" name="Benachrichtigung über Revidierung senden" camunda:class="de.thi.associations.bpmn.delegates.messages.AssociationManagerMemberRestorationNotifier">
         <bpmn:incoming>Flow_13dheix</bpmn:incoming>
         <bpmn:outgoing>Flow_0k1o4on</bpmn:outgoing>
       </bpmn:sendTask>
@@ -260,7 +255,7 @@
         <bpmn:incoming>Flow_0j5guat</bpmn:incoming>
         <bpmn:outgoing>Flow_0wlx6ii</bpmn:outgoing>
       </bpmn:parallelGateway>
-      <bpmn:sendTask id="Activity_0o8xndt" name="Bestätigung zur Revidierung versenden">
+      <bpmn:sendTask id="Activity_0o8xndt" name="Bestätigung zur Revidierung versenden" camunda:class="de.thi.associations.bpmn.delegates.messages.MemberRestorationConfirmationSender">
         <bpmn:incoming>Flow_01tpq6h</bpmn:incoming>
         <bpmn:outgoing>Flow_0j5guat</bpmn:outgoing>
       </bpmn:sendTask>
@@ -282,6 +277,13 @@
       <bpmn:incoming>Flow_1tjsig8</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1tjsig8" sourceRef="Event_01inwv4" targetRef="Event_1vl7ehl" />
+    <bpmn:intermediateCatchEvent id="Event_0p55k7r" name="Revidierung erhalten">
+      <bpmn:incoming>Flow_050q7lr</bpmn:incoming>
+      <bpmn:outgoing>Flow_075hmi2</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_01qs8eo" messageRef="Message_3g1uscp" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_075hmi2" sourceRef="Event_0p55k7r" targetRef="Event_16etvuj" />
+    <bpmn:sequenceFlow id="Flow_050q7lr" sourceRef="Gateway_12iz6j6" targetRef="Event_0p55k7r" />
     <bpmn:textAnnotation id="TextAnnotation_1c7vhfa">
       <bpmn:text>Falls das Mitglied seine Meinung nach dem Austritt in einer gewissen Frist ändert</bpmn:text>
     </bpmn:textAnnotation>
@@ -294,7 +296,10 @@
     <bpmn:association id="Association_0n2zroj" sourceRef="Event_0ueo6zs" targetRef="TextAnnotation_1e17my0" />
     <bpmn:association id="Association_1nyeh5s" sourceRef="Event_0p55k7r" targetRef="TextAnnotation_1c7vhfa" />
   </bpmn:process>
-  <bpmn:escalation id="Escalation_0ea4ti6" name="requestInvalid" />
+  <bpmn:escalation id="Escalation_0ea4ti6" name="requestInvalid" escalationCode="requestInvalid" />
+  <bpmn:message id="Message_0grjugv" name="membership-cancellation-request" />
+  <bpmn:message id="Message_3uebkrb" name="abort-cancellation" />
+  <bpmn:message id="Message_3g1uscp" name="restore-membership" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Austrittsprozess">
       <bpmndi:BPMNShape id="Participant_17oqa0r_di" bpmnElement="Participant_17oqa0r" isHorizontal="true">

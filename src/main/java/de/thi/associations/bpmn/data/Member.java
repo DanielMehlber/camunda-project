@@ -7,10 +7,12 @@ public class Member {
 
     private float monthlyFee;
 
-    public Member(String name) {
+    public Member(String name, float fee) {
         this.name = name;
         cancelled = false;
+        monthlyFee = fee;
     }
+
 
     public String getName() {
         return name;

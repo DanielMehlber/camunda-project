@@ -16,11 +16,11 @@ public class MockDataBaseSingleton {
         associations.add(neuland);
         associations.add(studentsLife);
 
-        neuland.getMemberList().add(new Member("Susi Sorglos"));
-        neuland.getMemberList().add(new Member("Hugo Habicht"));
-        neuland.getMemberList().add(new Member("Kermit Frog"));
+        neuland.getMemberList().add(new Member("Susi", 30));
+        neuland.getMemberList().add(new Member("Hugo", 20));
+        neuland.getMemberList().add(new Member("Kermit", 25));
 
-        studentsLife.getMemberList().add(new Member("Susi Sorglos"));
+        studentsLife.getMemberList().add(new Member("Susi", 10));
     }
 
     public static MockDataBaseSingleton getInstance() {
