@@ -31,4 +31,21 @@ public class MockDataBaseSingleton {
         return singleton;
     }
 
+    public List<Association> getAssociations() {
+        return associations;
+    }
+
+    public void setAssociations(List<Association> associations) {
+        this.associations = associations;
+    }
+
+    public Optional<Association> getAssociation(String name) {
+        for(Association association : associations) {
+            if(association.getName().equals(name)) {
+                return Optional.of(association);
+            }
+        }
+
+        return Optional.empty();
+    }
 }

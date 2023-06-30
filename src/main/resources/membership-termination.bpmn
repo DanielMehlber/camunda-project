@@ -17,8 +17,9 @@
     <bpmn:startEvent id="StartEvent_02okr4d" name="Anfrage auf Austritt erhalten">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="member-id" label="Mitgliedsnummer" type="string" />
-          <camunda:formField id="association-id" label="Vereinsname" type="string" />
+          <camunda:formField id="memberName" label="Mitgliedsname" type="string" />
+          <camunda:formField id="associationName" label="Vereinsname" type="string" />
+          <camunda:formField id="reason" label="Grund des Austritts" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1898nfy</bpmn:outgoing>
@@ -35,6 +36,11 @@
     <bpmn:sequenceFlow id="Flow_075hmi2" sourceRef="Event_0p55k7r" targetRef="Event_16etvuj" />
     <bpmn:sequenceFlow id="Flow_1jop5tb" sourceRef="Event_1gh5sta" targetRef="Event_03y5g24" />
     <bpmn:subProcess id="Activity_0nds5nd" name="Austrittsanfrage bearbeiten">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="isRequestValid" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1898nfy</bpmn:incoming>
       <bpmn:outgoing>Flow_1teytse</bpmn:outgoing>
       <bpmn:startEvent id="Event_1wivakg" name="Anfrage unverarbeitet">
@@ -67,12 +73,13 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_1tmfwli" sourceRef="Gateway_0ahlsk9" targetRef="Event_0jdleb5" />
       <bpmn:sequenceFlow id="Flow_0r4otks" sourceRef="Activity_1uy9vl5" targetRef="Gateway_0fqjno6" />
-      <bpmn:serviceTask id="Activity_1uy9vl5" name="Austrittsgrund vermerken">
+      <bpmn:serviceTask id="Activity_1uy9vl5" name="Austrittsgrund vermerken" camunda:class="de.thi.associations.bpmn.delegates.CancellationReasonRecorder">
         <bpmn:incoming>Flow_141f7ho</bpmn:incoming>
         <bpmn:outgoing>Flow_0r4otks</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_0hd9355" sourceRef="Event_1wivakg" targetRef="Activity_0s4emsg" />
       <bpmn:subProcess id="Activity_0s4emsg" name="Anfrage überprüfen">
+        <bpmn:extensionElements />
         <bpmn:incoming>Flow_0hd9355</bpmn:incoming>
         <bpmn:outgoing>Flow_0kict5u</bpmn:outgoing>
         <bpmn:startEvent id="Event_1ciai8w" name="Anfrage unüberpfüft">
@@ -85,13 +92,17 @@
           <bpmn:outgoing>Flow_1hm1ga4</bpmn:outgoing>
         </bpmn:exclusiveGateway>
         <bpmn:sequenceFlow id="Flow_0343o3w" sourceRef="Activity_1c6zw6d" targetRef="Gateway_02sgf2m" />
-        <bpmn:sequenceFlow id="Flow_1fjgnxw" name="Nein" sourceRef="Gateway_02sgf2m" targetRef="Gateway_0pz9s8z" />
-        <bpmn:sequenceFlow id="Flow_1hm1ga4" name="Ja" sourceRef="Gateway_02sgf2m" targetRef="Activity_04rpw1e" />
-        <bpmn:serviceTask id="Activity_1c6zw6d" name="Verein überprüfen">
+        <bpmn:sequenceFlow id="Flow_1fjgnxw" name="Nein" sourceRef="Gateway_02sgf2m" targetRef="Gateway_0pz9s8z">
+          <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${associationExists == false}</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:sequenceFlow id="Flow_1hm1ga4" name="Ja" sourceRef="Gateway_02sgf2m" targetRef="Activity_04rpw1e">
+          <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${associationExists == true}</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:serviceTask id="Activity_1c6zw6d" name="Verein überprüfen" camunda:class="de.thi.associations.bpmn.delegates.AssociationChecker">
           <bpmn:incoming>Flow_0i3593r</bpmn:incoming>
           <bpmn:outgoing>Flow_0343o3w</bpmn:outgoing>
         </bpmn:serviceTask>
-        <bpmn:serviceTask id="Activity_04rpw1e" name="Mitglied überprüfen">
+        <bpmn:serviceTask id="Activity_04rpw1e" name="Mitglied überprüfen" camunda:class="de.thi.associations.bpmn.delegates.MemberChecker">
           <bpmn:incoming>Flow_1hm1ga4</bpmn:incoming>
           <bpmn:outgoing>Flow_0btltv3</bpmn:outgoing>
         </bpmn:serviceTask>
@@ -107,12 +118,22 @@
           <bpmn:outgoing>Flow_13wvtsf</bpmn:outgoing>
         </bpmn:exclusiveGateway>
         <bpmn:sequenceFlow id="Flow_13wvtsf" sourceRef="Gateway_0pz9s8z" targetRef="Event_1kqil86" />
-        <bpmn:sequenceFlow id="Flow_05ctav4" name="Nein" sourceRef="Gateway_11qglfg" targetRef="Gateway_0pz9s8z" />
+        <bpmn:sequenceFlow id="Flow_05ctav4" name="Nein" sourceRef="Gateway_11qglfg" targetRef="Gateway_0pz9s8z">
+          <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isMember == false}</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
         <bpmn:endEvent id="Event_0df9z80" name="Anfrage gültig">
+          <bpmn:extensionElements>
+            <camunda:executionListener expression=" ${execution.setVariable(&#34;isRequestValid&#34;, true)}" event="start" />
+          </bpmn:extensionElements>
           <bpmn:incoming>Flow_0e73lq4</bpmn:incoming>
         </bpmn:endEvent>
-        <bpmn:sequenceFlow id="Flow_0e73lq4" name="Ja" sourceRef="Gateway_11qglfg" targetRef="Event_0df9z80" />
+        <bpmn:sequenceFlow id="Flow_0e73lq4" name="Ja" sourceRef="Gateway_11qglfg" targetRef="Event_0df9z80">
+          <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isMember == true}</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
         <bpmn:endEvent id="Event_1kqil86" name="Anfrage ungültig">
+          <bpmn:extensionElements>
+            <camunda:executionListener expression=" ${execution.setVariable(&#34;isRequestValid&#34;, false)}" event="start" />
+          </bpmn:extensionElements>
           <bpmn:incoming>Flow_13wvtsf</bpmn:incoming>
         </bpmn:endEvent>
       </bpmn:subProcess>
@@ -122,11 +143,15 @@
         <bpmn:outgoing>Flow_141f7ho</bpmn:outgoing>
         <bpmn:outgoing>Flow_0z4edlu</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:sequenceFlow id="Flow_141f7ho" name="Anfrage gültig" sourceRef="Gateway_11mhnkj" targetRef="Activity_1uy9vl5" />
-      <bpmn:sequenceFlow id="Flow_0z4edlu" name="Anfrage ungültig" sourceRef="Gateway_11mhnkj" targetRef="Event_05l7z46" />
+      <bpmn:sequenceFlow id="Flow_141f7ho" name="Anfrage gültig" sourceRef="Gateway_11mhnkj" targetRef="Activity_1uy9vl5">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isRequestValid == true}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0z4edlu" name="Anfrage ungültig" sourceRef="Gateway_11mhnkj" targetRef="Event_05l7z46">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isRequestValid == false}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
       <bpmn:endEvent id="Event_05l7z46" name="Anfrage unültig">
         <bpmn:incoming>Flow_0z4edlu</bpmn:incoming>
-        <bpmn:escalationEventDefinition id="EscalationEventDefinition_1o8mihu" />
+        <bpmn:escalationEventDefinition id="EscalationEventDefinition_1o8mihu" escalationRef="Escalation_0ea4ti6" />
       </bpmn:endEvent>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_1898nfy" sourceRef="StartEvent_02okr4d" targetRef="Activity_0nds5nd" />
@@ -141,7 +166,9 @@
     <bpmn:intermediateCatchEvent id="Event_0ovz3mr" name="warten bis zum Ende des Monats">
       <bpmn:incoming>Flow_1366xg9</bpmn:incoming>
       <bpmn:outgoing>Flow_0z55vur</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0m346l0" />
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0m346l0">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression" />
+      </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="Event_0ueo6zs" name="Aufhebung des Austritts erhalten">
       <bpmn:incoming>Flow_0qkp7e4</bpmn:incoming>
@@ -188,7 +215,7 @@
         <bpmn:outgoing>Flow_1fntdcw</bpmn:outgoing>
       </bpmn:startEvent>
       <bpmn:sequenceFlow id="Flow_1fntdcw" sourceRef="Event_1cgg7fi" targetRef="Activity_1b1ouv1" />
-      <bpmn:serviceTask id="Activity_1b1ouv1" name="Mitglied von Verein entfernen">
+      <bpmn:serviceTask id="Activity_1b1ouv1" name="Mitglied von Verein entfernen" camunda:class="de.thi.associations.bpmn.delegates.MemberRemover">
         <bpmn:incoming>Flow_1fntdcw</bpmn:incoming>
         <bpmn:outgoing>Flow_1cdlt8g</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -199,16 +226,16 @@
       <bpmn:boundaryEvent id="Event_03thnup" attachedToRef="Activity_1b1ouv1">
         <bpmn:compensateEventDefinition id="CompensateEventDefinition_1xkm0dp" />
       </bpmn:boundaryEvent>
-      <bpmn:serviceTask id="Activity_07giadl" name="Mitglied wieder- herstellen" isForCompensation="true" />
+      <bpmn:serviceTask id="Activity_07giadl" name="Mitglied wieder- herstellen" isForCompensation="true" camunda:class="de.thi.associations.bpmn.delegates.MemberRestorer" />
       <bpmn:sequenceFlow id="Flow_14o0ixp" sourceRef="Activity_1c8ceij" targetRef="Event_010rg2a" />
-      <bpmn:serviceTask id="Activity_1c8ceij" name="Mitgliedsbeitrag entfernen">
+      <bpmn:serviceTask id="Activity_1c8ceij" name="Mitgliedsbeitrag entfernen" camunda:class="de.thi.associations.bpmn.delegates.MemberTariffRemover">
         <bpmn:incoming>Flow_1cdlt8g</bpmn:incoming>
         <bpmn:outgoing>Flow_14o0ixp</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:boundaryEvent id="Event_02htejn" attachedToRef="Activity_1c8ceij">
         <bpmn:compensateEventDefinition id="CompensateEventDefinition_0tebtm5" />
       </bpmn:boundaryEvent>
-      <bpmn:serviceTask id="Activity_0ze6qqq" name="Mitgliedsbeitrag wieder-herstellen" isForCompensation="true" />
+      <bpmn:serviceTask id="Activity_0ze6qqq" name="Mitgliedsbeitrag wieder-herstellen" isForCompensation="true" camunda:class="de.thi.associations.bpmn.delegates.MemberTariffRestorer" />
       <bpmn:association id="Association_1lk6j3n" associationDirection="One" sourceRef="Event_03thnup" targetRef="Activity_07giadl" />
       <bpmn:association id="Association_0eczwlq" associationDirection="One" sourceRef="Event_02htejn" targetRef="Activity_0ze6qqq" />
       <bpmn:association id="Association_0yue5rc" sourceRef="Event_02htejn" targetRef="TextAnnotation_1py9bmd" />
@@ -249,7 +276,7 @@
     </bpmn:subProcess>
     <bpmn:boundaryEvent id="Event_01inwv4" name="Anfrage ungültig" attachedToRef="Activity_0nds5nd">
       <bpmn:outgoing>Flow_1tjsig8</bpmn:outgoing>
-      <bpmn:escalationEventDefinition id="EscalationEventDefinition_08vq4b9" />
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_08vq4b9" escalationRef="Escalation_0ea4ti6" />
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="Event_1vl7ehl" name="Ungültige Anfrage erhalten">
       <bpmn:incoming>Flow_1tjsig8</bpmn:incoming>
@@ -267,6 +294,7 @@
     <bpmn:association id="Association_0n2zroj" sourceRef="Event_0ueo6zs" targetRef="TextAnnotation_1e17my0" />
     <bpmn:association id="Association_1nyeh5s" sourceRef="Event_0p55k7r" targetRef="TextAnnotation_1c7vhfa" />
   </bpmn:process>
+  <bpmn:escalation id="Escalation_0ea4ti6" name="requestInvalid" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Austrittsprozess">
       <bpmndi:BPMNShape id="Participant_17oqa0r_di" bpmnElement="Participant_17oqa0r" isHorizontal="true">
