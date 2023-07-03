@@ -4,6 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Daniel Mehlber
+ */
 public class Association {
 
     private String name;

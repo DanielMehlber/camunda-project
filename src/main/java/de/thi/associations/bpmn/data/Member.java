@@ -1,5 +1,9 @@
 package de.thi.associations.bpmn.data;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class Member {
 
     private String name;

@@ -5,6 +5,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberRestorationConfirmationSender implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(MemberRestorationConfirmationSender.class);
@@ -15,7 +19,7 @@ public class MemberRestorationConfirmationSender implements JavaDelegate {
         final String association = (String) delegateExecution.getVariable("associationName");
 
 
-        LOG.info("Confirmation for member {}: your membership for association {} was restored", member, association);
+        LOG.info("✉ An Mitglied {}: Deine Mitgliedschaft bei {} wurde wiederhergestellt", member, association);
     }
 
 }

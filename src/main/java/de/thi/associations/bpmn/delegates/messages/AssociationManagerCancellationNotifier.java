@@ -7,6 +7,9 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Daniel Mehlber
+ */
 public class AssociationManagerCancellationNotifier implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(AssociationManagerCancellationNotifier.class);
@@ -17,6 +20,6 @@ public class AssociationManagerCancellationNotifier implements JavaDelegate {
         final String association = (String) delegateExecution.getVariable("associationName");
 
 
-        LOG.info("Notification to association manager: Member {} requested cancellation of his membership in your association {}", member, association);
+        LOG.info("✉ An Vereinsverantwortlichen: Mitglied {} möchte aus dem Verein {} austreten", member, association);
     }
 }

@@ -6,6 +6,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberRestorer implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(MemberRestorer.class);
@@ -18,6 +22,6 @@ public class MemberRestorer implements JavaDelegate {
         MockDataBaseSingleton database = MockDataBaseSingleton.getInstance();
         database.getAssociation(association).get().restoreMember(member);
 
-        LOG.info("restored member {} of association {}", member, association);
+        LOG.info("✨ Mitgliedschaft von {} in Verein {} wiederhergestellt", member, association);
     }
 }

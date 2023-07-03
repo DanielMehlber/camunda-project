@@ -2,6 +2,10 @@ package de.thi.associations.bpmn.data;
 
 import java.util.*;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MockDataBaseSingleton {
 
     private List<Association> associations;
@@ -21,6 +25,7 @@ public class MockDataBaseSingleton {
         neuland.getMemberList().add(new Member("Kermit", 25));
 
         studentsLife.getMemberList().add(new Member("Susi", 10));
+        studentsLife.getMemberList().add(new Member("Hugo", 15));
     }
 
     public static MockDataBaseSingleton getInstance() {

@@ -7,6 +7,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberTariffRestorer implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(MemberTariffRestorer.class);
@@ -18,7 +22,7 @@ public class MemberTariffRestorer implements JavaDelegate {
 
         Member memberInstance = MockDataBaseSingleton.getInstance().getAssociation(association).get().findMember(member).get();
 
-        LOG.info("Tariff (monthly fee of {}€) of member {} in association {} restored", memberInstance.getMonthlyFee(), member, association);
+        LOG.info("✨ Tarif (Monatsbeitrag {}€) von Mitglied {} in Verein {} wiederhergestellt", memberInstance.getMonthlyFee(), member, association);
     }
 
 }

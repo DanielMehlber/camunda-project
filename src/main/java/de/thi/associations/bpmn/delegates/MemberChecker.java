@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberChecker implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(MemberChecker.class);
@@ -36,9 +40,9 @@ public class MemberChecker implements JavaDelegate {
         delegateExecution.setVariableLocal("isMember", found);
 
         if(found) {
-            LOG.info("member {} is in association {}", memberName, associationName);
+            LOG.info("✅ Mitglied {} ist in Verein {} eingetragen", memberName, associationName);
         } else {
-            LOG.warn("no member {} in association {}", memberName, associationName);
+            LOG.warn("⛔\uFE0F Kein Mitglied {} in Verein {} bekannt. Abbruch.", memberName, associationName);
         }
     }
 }

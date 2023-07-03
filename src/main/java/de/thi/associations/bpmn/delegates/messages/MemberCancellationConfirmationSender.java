@@ -5,6 +5,9 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberCancellationConfirmationSender implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(AssociationManagerCancellationNotifier.class);
@@ -15,7 +18,7 @@ public class MemberCancellationConfirmationSender implements JavaDelegate {
         final String association = (String) delegateExecution.getVariable("associationName");
 
 
-        LOG.info("Confirmation to member {}: you successfully requested cancellation of your membership in association {}", member,association);
+        LOG.info("✉ An Mitglied {}: Deine Austrittsanfrage aus Verein {} wird verarbeitet", member,association);
     }
 
 }

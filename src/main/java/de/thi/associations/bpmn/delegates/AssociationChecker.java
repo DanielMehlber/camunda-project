@@ -6,6 +6,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class AssociationChecker implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(AssociationChecker.class);
@@ -18,9 +22,9 @@ public class AssociationChecker implements JavaDelegate {
         delegateExecution.setVariableLocal("associationExists", exists);
 
         if(exists) {
-            LOG.info("association {} exists", associationName);
+            LOG.info("✅ Verein {} existiert", associationName);
         } else {
-            LOG.warn("association {} does not exists", associationName);
+            LOG.warn("⛔\uFE0F Verein {} ist dem System unbekannt. Abbruch.", associationName);
         }
     }
 }

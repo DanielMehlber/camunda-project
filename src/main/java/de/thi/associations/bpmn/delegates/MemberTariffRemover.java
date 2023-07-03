@@ -7,6 +7,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberTariffRemover implements JavaDelegate {
 
 
@@ -19,6 +23,6 @@ public class MemberTariffRemover implements JavaDelegate {
 
         Member memberInstance = MockDataBaseSingleton.getInstance().getAssociation(association).get().findMember(member).get();
 
-        LOG.info("Tariff (monthly fee of {}€) of member {} in association {} removed", memberInstance.getMonthlyFee(), member, association);
+        LOG.info("\uD83E\uDDF9 Tarif (Monatsbeitrag {}€) des Mitglieds {} in Verein {} entfernt", memberInstance.getMonthlyFee(), member, association);
     }
 }

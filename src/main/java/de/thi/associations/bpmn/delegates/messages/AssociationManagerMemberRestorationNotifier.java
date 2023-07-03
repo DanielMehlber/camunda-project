@@ -5,6 +5,9 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Daniel Mehlber
+ */
 public class AssociationManagerMemberRestorationNotifier implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(AssociationManagerMemberRestorationNotifier.class);
@@ -15,7 +18,7 @@ public class AssociationManagerMemberRestorationNotifier implements JavaDelegate
         final String association = (String) delegateExecution.getVariable("associationName");
 
 
-        LOG.info("Notification to association manager: Member {} has restored his/her membership in your association {}", member, association);
+        LOG.info("✉ An Vereinsverantwortlichen: Mitglied {} ist zum Verein {} zurückgekehrt", member, association);
     }
 
 }

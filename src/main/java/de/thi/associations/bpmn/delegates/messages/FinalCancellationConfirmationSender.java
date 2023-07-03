@@ -5,6 +5,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class FinalCancellationConfirmationSender implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(FinalCancellationConfirmationSender.class);
@@ -15,7 +19,7 @@ public class FinalCancellationConfirmationSender implements JavaDelegate {
         final String association = (String) delegateExecution.getVariable("associationName");
 
 
-        LOG.info("Notification to former member {}:  You successfully left association {}", member, association);
+        LOG.info("✉ An Mitglied {}: Du hast den Verein {} verlassen. Innerhalb der Frist kannst du deine Meinung noch ändern", member, association);
     }
 
 }

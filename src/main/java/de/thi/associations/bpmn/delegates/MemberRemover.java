@@ -6,6 +6,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class MemberRemover implements JavaDelegate {
 
     private final static Logger LOG = LoggerFactory.getLogger(MemberRemover.class);
@@ -18,6 +22,6 @@ public class MemberRemover implements JavaDelegate {
         MockDataBaseSingleton database = MockDataBaseSingleton.getInstance();
         database.getAssociation(association).get().removeMember(member);
 
-        LOG.info("removed member {} from association {}", member, association);
+        LOG.info("\uD83E\uDDF9 Mitglied {} wurde erfolgreich von Verein {} entfernt", member, association);
     }
 }

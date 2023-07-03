@@ -5,6 +5,10 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * @author Daniel Mehlber
+ */
 public class CancellationReasonRecorder implements JavaDelegate {
 
     private static final Logger LOG = LoggerFactory.getLogger(CancellationReasonRecorder.class);
@@ -13,6 +17,6 @@ public class CancellationReasonRecorder implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) throws Exception {
         String reason = (String) delegateExecution.getVariable("reason");
 
-        LOG.info("recorded reason for cancellation request: {}", reason);
+        LOG.info("\uD83D\uDCDD Grund für Austritt wurde vermerkt: {}", reason);
     }
 }
